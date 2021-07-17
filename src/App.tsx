@@ -1,24 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import { GameScene } from './scenes/GameScene';
+import { MenuScene } from './scenes/MenuScene';
 
-function App() {
+function App(): JSX.Element {
+  const [showScene, setShowScene] = useState<'Menu' | 'Game' | 'Options'>('Menu');
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div style={{ display: 'flex', flex: '1 1 auto', width: '800px', height: '600px', backgroundColor: 'black' }}>
+        {showScene === 'Menu' && (
+          <MenuScene
+            onPlay={() => {
+              setShowScene('Game');
+            }}
+            onOptions={() => {
+              setShowScene('Options');
+            }}
+          />
+        )}
+        {showScene === 'Game' && <GameScene />}
+      </div>
     </div>
   );
 }
