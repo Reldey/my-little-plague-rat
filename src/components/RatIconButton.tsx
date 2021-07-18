@@ -80,6 +80,7 @@ export function RatIconButton(props: {
             position: 'relative',
             display: 'flex',
             alignItems: 'center',
+            border: 'solid 1px white',
           }}
         >
           <div

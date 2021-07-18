@@ -7,6 +7,10 @@ import { RatCharacter } from '../components/RatCharacter';
 import { theme } from '../theme';
 import { AthleticismTraining } from '../components/AthleticismTraining';
 import { Button } from '../components/Button';
+import { IntelligenceTraining } from '../components/IntelligenceTraining';
+
+import Background from '../graphics/background.png';
+import { CutenessTraining } from '../components/CutenessTraining';
 
 export function GameScene(): JSX.Element {
   const [ratList, setRatList] = useState<IRat[]>([]);
@@ -15,6 +19,9 @@ export function GameScene(): JSX.Element {
   const [showRatInfo, setShowRatInfo] = useState(false);
   const [showTraining, setShowTraining] = useState(false);
   const [showTrainingAthleticism, setShowTrainingAthleticism] = useState(false);
+  const [showTrainingIntelligence, setShowTrainingIntelligence] = useState(false);
+  const [showTrainingCuteness, setShowTrainingCuteness] = useState(false);
+
   const [maxRats, setMaxRats] = useState(2);
   const [coins, setCoins] = useState(100);
 
@@ -106,7 +113,7 @@ export function GameScene(): JSX.Element {
         display: 'flex',
         flexFlow: 'column nowrap',
         flex: '1 1 auto',
-        backgroundImage: 'url(/media/Ruins-Pixelatd-Colorized.png)',
+
         backgroundColor: 'black',
         maxWidth: '800px',
         overflow: 'hidden',
@@ -127,7 +134,7 @@ export function GameScene(): JSX.Element {
             },
           }}
         >
-          <div>{selectedRat.name} Details</div>
+          <div style={{ fontSize: '18px' }}>{selectedRat.name}</div>
           <div
             style={{
               display: 'flex',
@@ -147,8 +154,8 @@ export function GameScene(): JSX.Element {
               <div>
                 Size
                 <div style={{ marginTop: '6px' }} />
-                {parseFloat(selectedRat.size.toPrecision(2)) * 2}
-                &nbsp;Inches
+                {parseFloat(selectedRat.size.toPrecision(2)) * 4}
+                &nbsp;cm
               </div>
             </div>
             <div
@@ -161,17 +168,17 @@ export function GameScene(): JSX.Element {
               <div>
                 Athleticism
                 <div style={{ marginTop: '6px' }} />
-                {selectedRat.athleticism}
+                {selectedRat.athleticism.toPrecision(2)}
               </div>
               <div>
                 Intelligence
                 <div style={{ marginTop: '6px' }} />
-                {selectedRat.intelligence}
+                {selectedRat.intelligence.toPrecision(2)}
               </div>
               <div>
                 Cuteness
                 <div style={{ marginTop: '6px' }} />
-                {selectedRat.cuteness}
+                {selectedRat.cuteness.toPrecision(2)}
               </div>
             </div>
           </div>
@@ -203,7 +210,7 @@ export function GameScene(): JSX.Element {
           <div style={{ display: 'flex', flexFlow: 'row nowrap', width: '100%', justifyContent: 'space-around' }}>
             <ActionButton
               onClick={() => {
-                setShowTrainingAthleticism(!showTrainingAthleticism);
+                setShowTrainingAthleticism(true);
               }}
               style={{ flexFlow: 'column nowrap', width: '92px' }}
             >
@@ -212,7 +219,7 @@ export function GameScene(): JSX.Element {
             </ActionButton>
             <ActionButton
               onClick={() => {
-                // setShowTrainingAthleticism(!showTrainingAthleticism);
+                setShowTrainingIntelligence(true);
               }}
               style={{ flexFlow: 'column nowrap', width: '92px' }}
             >
@@ -221,7 +228,7 @@ export function GameScene(): JSX.Element {
             </ActionButton>
             <ActionButton
               onClick={() => {
-                // setShowTrainingAthleticism(!showTrainingAthleticism);
+                setShowTrainingCuteness(true);
               }}
               style={{ flexFlow: 'column nowrap', width: '92px' }}
             >
@@ -252,7 +259,41 @@ export function GameScene(): JSX.Element {
           }}
           rat={selectedRat}
           onClose={() => {
-            setShowTrainingAthleticism(!showTrainingAthleticism);
+            setShowTrainingAthleticism(false);
+          }}
+        />
+      )}
+      {showTrainingIntelligence && selectedRat && (
+        <IntelligenceTraining
+          onCompletion={(score) => {
+            const newRatList = [...ratList];
+            for (const rat of newRatList) {
+              if (selectedRat.id === rat.id) {
+                rat.intelligence = rat.intelligence + score / 100;
+              }
+            }
+            setRatList(newRatList);
+          }}
+          rat={selectedRat}
+          onClose={() => {
+            setShowTrainingIntelligence(false);
+          }}
+        />
+      )}
+      {showTrainingCuteness && selectedRat && (
+        <CutenessTraining
+          onCompletion={(score) => {
+            const newRatList = [...ratList];
+            for (const rat of newRatList) {
+              if (selectedRat.id === rat.id) {
+                rat.athleticism = rat.athleticism + score / 100;
+              }
+            }
+            setRatList(newRatList);
+          }}
+          rat={selectedRat}
+          onClose={() => {
+            setShowTrainingCuteness(false);
           }}
         />
       )}
@@ -262,7 +303,7 @@ export function GameScene(): JSX.Element {
           display: 'flex',
           width: '100%',
           height: '94px',
-          backgroundColor: 'purple',
+          backgroundColor: 'black',
           maxWidth: '100%',
           overflowX: 'auto',
           padding: '6px',
@@ -301,7 +342,10 @@ export function GameScene(): JSX.Element {
         })}
       </div>
       {/* RAT PEN */}
-      <div style={{ display: 'flex', flex: '1 1 auto', position: 'relative' }} id={'rat_pen'}>
+      <div
+        style={{ display: 'flex', flex: '1 1 auto', position: 'relative', backgroundImage: `url(${Background})` }}
+        id={'rat_pen'}
+      >
         {ratList.map((rat) => {
           const currentRat = document.getElementById('rat_body' + rat.id) as HTMLElement | null;
           if (rat.status === 'alive' && rat.present === true) {

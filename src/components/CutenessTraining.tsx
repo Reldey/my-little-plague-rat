@@ -3,7 +3,7 @@ import { IRat } from '../interfaces/rat';
 import { theme } from '../theme';
 import { Button } from './Button';
 
-export function AthleticismTraining(props: {
+export function CutenessTraining(props: {
   rat: IRat;
   onClose: () => void;
   onCompletion: (score: number) => void;

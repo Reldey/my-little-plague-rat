@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IRat } from '../interfaces/rat';
-import RatSvg from '../graphics/rat.svg';
+import RatSvg from '../graphics/Rat_2.svg';
 
 export const RAT_BASE_HEIGHT = 32;
 export const RAT_BASE_WIDTH = 64;
