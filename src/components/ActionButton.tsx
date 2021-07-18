@@ -3,7 +3,8 @@ import { theme } from '../theme';
 
 interface IActionButton {
   style?: React.CSSProperties;
-  onClick?: () => void;
+  onClick: () => void;
+  disabled?: boolean;
   children: React.ReactNode;
 }
 
@@ -14,9 +15,15 @@ export function ActionButton(props: IActionButton): JSX.Element {
     <div
       style={{
         ...theme.buttonStyle,
-        ...{ width: '64px', height: '64px', minWidth: '64px', backgroundColor: 'green' },
+        ...{
+          width: '64px',
+          height: '64px',
+          minWidth: '64px',
+          backgroundColor: props.disabled ? 'gray' : 'green',
+          color: props.disabled ? 'darkgray' : 'white',
+        },
         ...props.style,
-        ...{ border: hovered ? 'solid 2px white' : 'none' },
+        ...{ border: props.disabled ? 'solid 2px darkgray' : hovered ? 'solid 2px white' : 'solid 2px darkgray' },
       }}
       onMouseEnter={() => {
         setHovered(true);
@@ -24,7 +31,11 @@ export function ActionButton(props: IActionButton): JSX.Element {
       onMouseLeave={() => {
         setHovered(false);
       }}
-      onClick={props.onClick}
+      onClick={() => {
+        if (!props.disabled) {
+          props.onClick();
+        }
+      }}
     >
       {props.children}
     </div>

@@ -12,7 +12,11 @@ export function Button(props: IButton): JSX.Element {
 
   return (
     <div
-      style={{ ...theme.buttonStyle, ...props.style, ...{ border: hovered ? 'solid 2px white' : 'none' } }}
+      style={{
+        ...theme.buttonStyle,
+        ...props.style,
+        ...{ border: hovered ? 'solid 2px white' : 'solid 2px darkgray' },
+      }}
       onMouseEnter={() => {
         setHovered(true);
       }}
