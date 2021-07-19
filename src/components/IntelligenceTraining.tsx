@@ -46,24 +46,23 @@ export function IntelligenceTraining(props: {
 
   useEffect(() => {
     const cardTimer = setTimeout(() => {
-      if (shownSymbols.length === 2) {
-        console.log(shownSymbols);
-        console.log(shownSymbols[0] === shownSymbols[1]);
+      if (shownSymbols.length === 2 && timer > 0) {
         if (shownSymbols[0] === shownSymbols[1]) {
+          setShownSymbols([]);
+          setShownCards([]);
           const newMatchedCards = [...matchedCards];
           newMatchedCards.push(shownSymbols[0]);
-          console.log('MATCHED!');
-          console.log(newMatchedCards);
           setMatches(matches + 1);
           setMatchedCards(newMatchedCards);
-          setShownCards([]);
-          setShownSymbols([]);
+          if (matches === 7) {
+            setTimer(0);
+          }
         } else {
           setShownCards([]);
           setShownSymbols([]);
         }
       }
-    }, 1000);
+    }, 500);
     return () => {
       clearTimeout(cardTimer);
     };
@@ -80,7 +79,7 @@ export function IntelligenceTraining(props: {
 
   useEffect(() => {
     if (timer === 0) {
-      props.onCompletion((matches / 8) * 100);
+      props.onCompletion(matches / 8);
     }
   }, [timer]);
 

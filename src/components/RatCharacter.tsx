@@ -43,17 +43,19 @@ export function RatCharacter(props: {
     <div
       className={'rat-body'}
       id={'rat_body' + props.rat.id}
+      ref={ratRef}
       style={{
         position: 'absolute',
-        bottom: '12px',
+        bottom: props.currentRat !== null ? props.currentRat.style.bottom : Math.floor(Math.random() * 100) + 12 + 'px',
         left: props.currentRat !== null ? props.currentRat.style.left : Math.floor(Math.random() * 800),
         height: props.rat.size * RAT_BASE_HEIGHT,
         width: props.rat.size * RAT_BASE_WIDTH,
         display: 'flex',
         flex: '1 1 auto',
         transformOrigin: 'bottom center',
+        cursor: 'pointer',
+        userSelect: 'none',
       }}
-      ref={ratRef}
     >
       <div
         style={{

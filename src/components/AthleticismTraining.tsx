@@ -52,7 +52,7 @@ export function AthleticismTraining(props: {
 
   useEffect(() => {
     if (timer === 0) {
-      props.onCompletion(effort);
+      props.onCompletion(effort / 100);
     }
   }, [timer]);
 

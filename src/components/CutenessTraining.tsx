@@ -1,7 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { IRat } from '../interfaces/rat';
-import { theme } from '../theme';
+import { colors, theme } from '../theme';
 import { Button } from './Button';
+
+const keyStyle: React.CSSProperties = {
+  width: '52px',
+  height: '52px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  margin: '6px',
+};
+
+const wKeyCode = 87;
+const aKeyCode = 65;
+const sKeyCode = 83;
+const dKeyCode = 68;
+
+const keyCodeArray = [wKeyCode, aKeyCode, sKeyCode, dKeyCode];
 
 export function CutenessTraining(props: {
   rat: IRat;
@@ -9,19 +25,25 @@ export function CutenessTraining(props: {
   onCompletion: (score: number) => void;
 }): JSX.Element {
   const [countdown, setCountdown] = useState(5);
-  const [timer, setTimer] = useState(10);
+  const [timer, setTimer] = useState(40);
   const [effort, setEffort] = useState(0);
+  const [targetKey, setTargetKey] = useState<number>();
 
   const gameKeyPresses = useCallback(
     (event) => {
-      console.log(countdown);
-      if ((event.keyCode === 90 || event.keycode === 191) && countdown <= 0 && timer > 0) {
+      if (event.keyCode === targetKey && countdown <= 0 && timer > 0) {
         if (effort < 100) {
           setEffort(effort + 2);
+          setTargetKey(undefined);
+          if (timer >= 3) {
+            setTimeout(() => {
+              setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
+            }, 250);
+          }
         }
       }
     },
-    [countdown, effort],
+    [countdown, effort, targetKey, timer],
   );
 
   useEffect(() => {
@@ -30,7 +52,7 @@ export function CutenessTraining(props: {
     return () => {
       document.removeEventListener('keydown', gameKeyPresses, false);
     };
-  }, [countdown, effort]);
+  }, [countdown, effort, targetKey, timer]);
 
   useEffect(() => {
     const countdownInterval = setInterval(() => {
@@ -44,15 +66,26 @@ export function CutenessTraining(props: {
   useEffect(() => {
     const timerInterval = setInterval(() => {
       if (countdown === -1 && timer > 0) {
+        if (timer === 40 && targetKey === undefined) {
+          setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
+        }
+        if (timer === 1) {
+          setTargetKey(undefined);
+        }
         setTimer(timer - 1);
       }
-    }, 1000);
+    }, 250);
     return () => clearInterval(timerInterval);
   }, [timer, countdown]);
 
   useEffect(() => {
     if (timer === 0) {
-      props.onCompletion(effort);
+      setTargetKey(undefined);
+      if (effort < 24) {
+        props.onCompletion(effort / 24);
+      } else {
+        props.onCompletion(1);
+      }
     }
   }, [timer]);
 
@@ -61,8 +94,8 @@ export function CutenessTraining(props: {
       style={{
         ...theme.cardStyle,
         ...{
-          height: '340px',
-          width: '440px',
+          height: '400px',
+          width: '500px',
           flexFlow: 'column nowrap',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -70,46 +103,69 @@ export function CutenessTraining(props: {
       }}
     >
       <div style={{ display: 'flex', flexFlow: 'column nowrap' }}>
-        <div style={{ fontSize: '18px' }}>{`Let's Train Athleticism!`}</div>
-        <div style={{ marginTop: '12px' }}>{`Mash "Z" and "/" when the timer hits 0 to fill up the bar!`}</div>
+        <div style={{ fontSize: '18px' }}>{`Let's Train Cuteness!`}</div>
+        <div style={{ marginTop: '12px' }}>{`Hit the keys when they light up, but don't hit the wrong one!`}</div>
         <div style={{ marginTop: '6px' }}>{countdown > 0 ? countdown : 'GO!!!'}</div>
         <div
           style={{
             width: '100%',
             display: 'flex',
-            flexFlow: 'row nowrap',
+            flexFlow: 'column nowrap',
             justifyContent: 'center',
             alignItems: 'center',
             marginTop: '12px',
           }}
         >
-          <i style={{ ...theme.iconStyle, ...{ fontSize: '24px' } }}>directions_run</i>
           <div
             style={{
-              width: '100%',
-              height: '28px',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              border: 'solid 2px white',
+              ...keyStyle,
+              ...{ border: targetKey === wKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
             }}
           >
-            <div style={{ position: 'absolute', width: effort + '%', backgroundColor: 'yellow', height: '24px' }}></div>
+            W
+          </div>
+          <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
+            <div
+              style={{
+                ...keyStyle,
+                ...{ border: targetKey === aKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
+              }}
+            >
+              A
+            </div>
+            <div
+              style={{
+                ...keyStyle,
+                ...{ border: targetKey === sKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
+              }}
+            >
+              S
+            </div>
+            <div
+              style={{
+                ...keyStyle,
+                ...{ border: targetKey === dKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
+              }}
+            >
+              D
+            </div>
           </div>
         </div>
-        <div style={{ marginTop: '6px' }}>{countdown === -1 && timer > 0 ? 'Time left: ' + timer : <br />}</div>
+        <div style={{ marginTop: '6px' }}>
+          {countdown === -1 && timer > 0 ? 'Time left: ' + Math.floor(timer / 4) : <br />}
+        </div>
         {timer === 0 && (
           <div>
             <div>Finished!</div>
-            <div style={{ marginTop: '6px' }}>You scored {effort} out of 100</div>
+            <div style={{ marginTop: '6px' }}>You scored {effort}</div>
             <div style={{ display: 'flex', flexFlow: 'row nowrap', justifyContent: 'center', marginTop: '6px' }}>
               <div>{props.rat.name}&nbsp;</div>
               <div>
-                {effort <= 25 && 'barely moved!'}
-                {effort > 25 && effort <= 50 && 'did OK...'}
-                {effort > 50 && effort <= 75 && 'did pretty good!'}
-                {effort > 75 && effort < 100 && 'did pretty GREAT!'}
-                {effort === 100 && 'did PERFECT!'}
+                {effort <= 4 && 'barely moved!'}
+                {effort > 4 && effort <= 8 && 'did OK...'}
+                {effort > 8 && effort <= 16 && 'did pretty good!'}
+                {effort > 16 && effort < 23 && 'did pretty GREAT!'}
+                {effort >= 24 && 'did PERFECT!'}
               </div>
             </div>
           </div>

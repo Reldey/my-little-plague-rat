@@ -62,10 +62,6 @@ export function GameScene(): JSX.Element {
     return () => clearInterval(ageRatsInterval);
   }, [ratList]);
 
-  useEffect(() => {
-    console.log(ratList);
-  }, [ratList]);
-
   function ratGenerator() {
     let ratName = names[Math.floor(Math.random() * names.length)];
     let sameNameCount = 0;
@@ -252,7 +248,7 @@ export function GameScene(): JSX.Element {
             const newRatList = [...ratList];
             for (const rat of newRatList) {
               if (selectedRat.id === rat.id) {
-                rat.athleticism = rat.athleticism + score / 100;
+                rat.athleticism = rat.athleticism + score;
               }
             }
             setRatList(newRatList);
@@ -269,7 +265,7 @@ export function GameScene(): JSX.Element {
             const newRatList = [...ratList];
             for (const rat of newRatList) {
               if (selectedRat.id === rat.id) {
-                rat.intelligence = rat.intelligence + score / 100;
+                rat.intelligence = rat.intelligence + score;
               }
             }
             setRatList(newRatList);
@@ -307,6 +303,7 @@ export function GameScene(): JSX.Element {
           maxWidth: '100%',
           overflowX: 'auto',
           padding: '6px',
+          borderBottom: 'solid 2px gray',
         }}
       >
         {ratList.map((rat) => {

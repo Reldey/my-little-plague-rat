@@ -29,6 +29,7 @@ export function RatIconButton(props: {
         padding: '6px',
         justifyContent: 'space-between',
         alignItems: 'center',
+        userSelect: 'none',
       }}
       onClick={() => {
         props.onClick(props.rat);
