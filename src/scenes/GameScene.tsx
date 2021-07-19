@@ -11,6 +11,7 @@ import { IntelligenceTraining } from '../components/IntelligenceTraining';
 
 import Background from '../graphics/background.png';
 import { CutenessTraining } from '../components/CutenessTraining';
+import { MusicPlayer } from '../hooks/MusicPlayer';
 
 export function GameScene(): JSX.Element {
   const [ratList, setRatList] = useState<IRat[]>([]);
@@ -282,7 +283,7 @@ export function GameScene(): JSX.Element {
             const newRatList = [...ratList];
             for (const rat of newRatList) {
               if (selectedRat.id === rat.id) {
-                rat.athleticism = rat.athleticism + score / 100;
+                rat.cuteness = rat.cuteness + score;
               }
             }
             setRatList(newRatList);
@@ -371,6 +372,7 @@ export function GameScene(): JSX.Element {
           flexFlow: 'row nowrap',
           width: '100%',
           justifyContent: 'space-around',
+          alignItems: 'center',
           backgroundColor: 'gray',
           padding: '6px',
         }}
@@ -430,6 +432,7 @@ export function GameScene(): JSX.Element {
         >
           Missives
         </ActionButton>
+        <MusicPlayer url={'/MyLittlePlagueRat.wav'} />
       </div>
     </div>
   );
