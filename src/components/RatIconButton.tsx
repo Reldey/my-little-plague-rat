@@ -13,7 +13,7 @@ export function RatIconButton(props: {
 }): JSX.Element {
   const [hovered, setHovered] = useState(false);
   const [hoveredInfo, setHoveredInfo] = useState(false);
-  const [audio] = useState(new Audio('/audio/tap_warm.wav'));
+  const [audio] = useState(new Audio('/audio/Tap_Warm.mp3'));
 
   return (
     <div

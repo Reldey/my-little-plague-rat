@@ -28,9 +28,11 @@ export function MenuScene(props: { onPlay: () => void; onOptions: () => void }):
       <Button style={theme.buttonStyle} onClick={props.onPlay}>
         Play
       </Button>
-      <Button style={{ marginTop: '12px' }} onClick={props.onOptions}>
-        Options
-      </Button>
+      {/* 
+        <Button style={{ marginTop: '12px' }} onClick={props.onOptions}>
+          Options
+        </Button>
+      */}
     </div>
   );
 }

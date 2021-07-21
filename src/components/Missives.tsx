@@ -16,7 +16,6 @@ export function Missives(props: {
   const [hoveredRatSlot, setHoveredRatSlot] = useState(-1);
   const [showMissiveList, setShowMissiveList] = useState(true);
   const [selectedMisive, setSelectedMissive] = useState<IMissive>();
-  const [audio] = useState(new Audio('/audio/tap_warm.wav'));
   const [checkedRats, setCheckedRats] = useState<number[]>([]);
 
   return (
@@ -76,7 +75,6 @@ export function Missives(props: {
                       setSelectedMissive(missive);
                       setShowMissiveList(false);
                       setHoveredMissive(-1);
-                      audio.play();
                     }
                   }}
                 >

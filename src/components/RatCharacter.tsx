@@ -17,10 +17,10 @@ export function RatCharacter(props: {
   const [hovered, setHovered] = useState(false);
   const ratRef = useRef<HTMLDivElement>(null);
   const ratImgRef = useRef<HTMLImageElement>(null);
-  const [squeak1] = useSound('/audio/Mouse_Squeak_1.wav', { volume: 0.2 });
-  const [squeak2] = useSound('/audio/Mouse_Squeak_2.wav', { volume: 0.2 });
-  const [squeak3] = useSound('/audio/Mouse_Squeak_3.wav', { volume: 0.2 });
-  const [squeak4] = useSound('/audio/Mouse_Squeak_4.wav', { volume: 0.2 });
+  const [squeak1] = useSound('/audio/Mouse_Squeak_1.mp3', { volume: 0.2 });
+  const [squeak2] = useSound('/audio/Mouse_Squeak_2.mp3', { volume: 0.2 });
+  const [squeak3] = useSound('/audio/Mouse_Squeak_3.mp3', { volume: 0.2 });
+  const [squeak4] = useSound('/audio/Mouse_Squeak_4.mp3', { volume: 0.2 });
 
   const squeaks = [squeak1, squeak2, squeak3, squeak4];
 
