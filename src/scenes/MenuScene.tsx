@@ -12,6 +12,8 @@ export function MenuScene(props: { onPlay: () => void; onOptions: () => void }):
         justifyContent: 'center',
         alignItems: 'center',
         flex: '1 1 auto',
+        backgroundColor: 'black',
+        height: '100%',
         color: 'white',
       }}
     >

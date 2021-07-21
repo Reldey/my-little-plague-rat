@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IRat } from '../interfaces/rat';
+import useSound from 'use-sound';
+import { IRat } from '../data/IRat';
 import RatSvg from '../graphics/Rat_2.svg';
 
 export const RAT_BASE_HEIGHT = 32;
@@ -10,11 +11,18 @@ export function RatCharacter(props: {
   currentRat: HTMLElement | null;
   selected: boolean;
   hovered: boolean;
+  penRect: DOMRect | undefined;
   onClick: (rat: IRat) => void;
 }): JSX.Element {
   const [hovered, setHovered] = useState(false);
   const ratRef = useRef<HTMLDivElement>(null);
   const ratImgRef = useRef<HTMLImageElement>(null);
+  const [squeak1] = useSound('/audio/Mouse_Squeak_1.wav', { volume: 0.2 });
+  const [squeak2] = useSound('/audio/Mouse_Squeak_2.wav', { volume: 0.2 });
+  const [squeak3] = useSound('/audio/Mouse_Squeak_3.wav', { volume: 0.2 });
+  const [squeak4] = useSound('/audio/Mouse_Squeak_4.wav', { volume: 0.2 });
+
+  const squeaks = [squeak1, squeak2, squeak3, squeak4];
 
   useEffect(() => {
     function generateNewLeft(containerWidth: number, ratBody: React.RefObject<HTMLDivElement>) {
@@ -27,17 +35,22 @@ export function RatCharacter(props: {
             ratImgRef.current.style.transform = 'scaleX(' + (movement >= 0 ? '1' : '-1') + ')';
           }
         } else {
-          generateNewLeft(containerWidth, ratBody);
+          if (props.penRect) {
+            console.log(props.penRect.width);
+            generateNewLeft(props.penRect.width, ratBody);
+          }
         }
       }
     }
 
     const intervalId = setInterval(() => {
-      generateNewLeft(800, ratRef);
+      if (props.penRect) {
+        generateNewLeft(props.penRect?.width, ratRef);
+      }
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [props.penRect]);
 
   return (
     <div
@@ -46,8 +59,14 @@ export function RatCharacter(props: {
       ref={ratRef}
       style={{
         position: 'absolute',
-        bottom: props.currentRat !== null ? props.currentRat.style.bottom : Math.floor(Math.random() * 100) + 12 + 'px',
-        left: props.currentRat !== null ? props.currentRat.style.left : Math.floor(Math.random() * 800),
+        bottom:
+          props.currentRat !== null
+            ? props.currentRat.style.bottom
+            : Math.floor(Math.random() * (props.penRect ? props.penRect?.height / 2 : 200)) + 12 + 'px',
+        left:
+          props.currentRat !== null
+            ? props.currentRat.style.left
+            : Math.floor(Math.random() * (props.penRect ? props.penRect?.width - 100 : 600)),
         height: props.rat.size * RAT_BASE_HEIGHT,
         width: props.rat.size * RAT_BASE_WIDTH,
         display: 'flex',
@@ -80,6 +99,7 @@ export function RatCharacter(props: {
           setHovered(false);
         }}
         onClick={() => {
+          squeaks[Math.floor(Math.random() * 4)]();
           props.onClick(props.rat);
         }}
         style={{ width: props.rat.size * RAT_BASE_WIDTH, height: props.rat.size * RAT_BASE_HEIGHT }}

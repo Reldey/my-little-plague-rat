@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import useSound from 'use-sound';
 import { theme } from '../theme';
 
 interface IButton {
@@ -9,6 +10,7 @@ interface IButton {
 
 export function Button(props: IButton): JSX.Element {
   const [hovered, setHovered] = useState(false);
+  const [play] = useSound('/audio/Tap_Warm.mp3');
 
   return (
     <div
@@ -23,7 +25,12 @@ export function Button(props: IButton): JSX.Element {
       onMouseLeave={() => {
         setHovered(false);
       }}
-      onClick={props.onClick}
+      onClick={() => {
+        if (props.onClick) {
+          props.onClick();
+          play();
+        }
+      }}
     >
       {props.children}
     </div>

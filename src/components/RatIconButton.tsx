@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IRat } from '../interfaces/rat';
+import { IRat } from '../data/IRat';
 import { theme } from '../theme';
 
 export function RatIconButton(props: {
@@ -13,6 +13,7 @@ export function RatIconButton(props: {
 }): JSX.Element {
   const [hovered, setHovered] = useState(false);
   const [hoveredInfo, setHoveredInfo] = useState(false);
+  const [audio] = useState(new Audio('/audio/tap_warm.wav'));
 
   return (
     <div
@@ -32,6 +33,7 @@ export function RatIconButton(props: {
         userSelect: 'none',
       }}
       onClick={() => {
+        audio.play();
         props.onClick(props.rat);
       }}
       onMouseEnter={() => {
@@ -51,6 +53,7 @@ export function RatIconButton(props: {
         }}
         onClick={(e) => {
           e.stopPropagation();
+          audio.play();
           props.onInfoClick(props.rat);
         }}
         onMouseEnter={() => {

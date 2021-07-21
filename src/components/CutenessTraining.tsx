@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { IRat } from '../interfaces/rat';
+import React, { RefObject, useCallback, useEffect, useState } from 'react';
+import { IRat } from '../data/IRat';
 import { colors, theme } from '../theme';
 import { Button } from './Button';
 
@@ -12,22 +12,25 @@ const keyStyle: React.CSSProperties = {
   margin: '6px',
 };
 
-const wKeyCode = 87;
-const aKeyCode = 65;
-const sKeyCode = 83;
-const dKeyCode = 68;
+const upKeyCode = 38;
+const leftKeyCode = 37;
+const downKeyCode = 40;
+const rightKeyCode = 39;
 
-const keyCodeArray = [wKeyCode, aKeyCode, sKeyCode, dKeyCode];
+const keyCodeArray = [upKeyCode, leftKeyCode, downKeyCode, rightKeyCode];
 
 export function CutenessTraining(props: {
   rat: IRat;
+  penRect: DOMRect | undefined;
+  gameRef: RefObject<HTMLDivElement>;
   onClose: () => void;
-  onCompletion: (score: number) => void;
+  onCompletion: (trainingRat: IRat, score: number) => void;
 }): JSX.Element {
   const [countdown, setCountdown] = useState(5);
   const [timer, setTimer] = useState(40);
   const [effort, setEffort] = useState(0);
   const [targetKey, setTargetKey] = useState<number>();
+  const [trainingRat, setTrainingRat] = useState<IRat>();
 
   const gameKeyPresses = useCallback(
     (event) => {
@@ -45,6 +48,26 @@ export function CutenessTraining(props: {
     },
     [countdown, effort, targetKey, timer],
   );
+
+  function tapKey(keyTapped: number) {
+    if (keyTapped === targetKey && countdown <= 0 && timer > 0) {
+      if (effort < 100) {
+        setEffort(effort + 2);
+        setTargetKey(undefined);
+        if (timer >= 3) {
+          setTimeout(() => {
+            setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
+          }, 250);
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (timer === 39) {
+      setTrainingRat(props.rat);
+    }
+  }, [timer]);
 
   useEffect(() => {
     document.addEventListener('keydown', gameKeyPresses, false);
@@ -81,10 +104,12 @@ export function CutenessTraining(props: {
   useEffect(() => {
     if (timer === 0) {
       setTargetKey(undefined);
-      if (effort < 24) {
-        props.onCompletion(effort / 24);
-      } else {
-        props.onCompletion(1);
+      if (trainingRat) {
+        if (effort < 24) {
+          props.onCompletion(trainingRat, effort / 24);
+        } else {
+          props.onCompletion(trainingRat, 1);
+        }
       }
     }
   }, [timer]);
@@ -94,11 +119,14 @@ export function CutenessTraining(props: {
       style={{
         ...theme.cardStyle,
         ...{
-          height: '400px',
-          width: '500px',
           flexFlow: 'column nowrap',
           justifyContent: 'space-between',
           alignItems: 'center',
+          textAlign: 'center',
+          marginBottom:
+            props.penRect && props.gameRef.current
+              ? 'calc(' + props.gameRef.current.clientHeight + 'px - ' + props.penRect.height + 'px)'
+              : 0,
         },
       }}
     >
@@ -117,37 +145,49 @@ export function CutenessTraining(props: {
           }}
         >
           <div
+            onClick={() => {
+              tapKey(upKeyCode);
+            }}
             style={{
               ...keyStyle,
-              ...{ border: targetKey === wKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
+              ...{ border: targetKey === upKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
             }}
           >
-            W
+            <i style={theme.iconStyle}>north</i>
           </div>
           <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
             <div
+              onClick={() => {
+                tapKey(leftKeyCode);
+              }}
               style={{
                 ...keyStyle,
-                ...{ border: targetKey === aKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
+                ...{ border: targetKey === leftKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
               }}
             >
-              A
+              <i style={theme.iconStyle}>west</i>
             </div>
             <div
+              onClick={() => {
+                tapKey(downKeyCode);
+              }}
               style={{
                 ...keyStyle,
-                ...{ border: targetKey === sKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
+                ...{ border: targetKey === downKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
               }}
             >
-              S
+              <i style={theme.iconStyle}>south</i>
             </div>
             <div
+              onClick={() => {
+                tapKey(rightKeyCode);
+              }}
               style={{
                 ...keyStyle,
-                ...{ border: targetKey === dKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
+                ...{ border: targetKey === rightKeyCode ? 'solid 2px ' + colors.primary : 'solid 2px gray' },
               }}
             >
-              D
+              <i style={theme.iconStyle}>east</i>
             </div>
           </div>
         </div>
@@ -159,7 +199,7 @@ export function CutenessTraining(props: {
             <div>Finished!</div>
             <div style={{ marginTop: '6px' }}>You scored {effort}</div>
             <div style={{ display: 'flex', flexFlow: 'row nowrap', justifyContent: 'center', marginTop: '6px' }}>
-              <div>{props.rat.name}&nbsp;</div>
+              <div>{trainingRat?.name || 'Error'}&nbsp;</div>
               <div>
                 {effort <= 4 && 'barely moved!'}
                 {effort > 4 && effort <= 8 && 'did OK...'}

@@ -1,3 +1,5 @@
+
+
 @font-face {
   font-family: 'SerifGothicStd';
   src: url(fonts/SerifGothicStd-Bold.otf);
@@ -8,4 +10,11 @@
   font-style: normal;
   font-weight: 400;
   src: url(fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
+html, body, #root, .app {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  width: 100%;
 }

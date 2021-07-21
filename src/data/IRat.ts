@@ -1,4 +1,4 @@
-import { IReward } from './mission';
+import { IItem } from './items';
 
 export interface IRat {
   name: string;
@@ -8,7 +8,7 @@ export interface IRat {
   athleticism: number;
   cuteness: number;
   size: number;
-  equipment: IReward[];
+  equipment: IItem[];
   status: 'alive' | 'dead';
   // Whether or not the rat is in the rat pen
   present: boolean;

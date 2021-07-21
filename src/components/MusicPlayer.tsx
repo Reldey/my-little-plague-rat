@@ -2,17 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { ActionButton } from '../components/ActionButton';
 import { theme } from '../theme';
 
-export const MusicPlayer = ({ url }: { url: string }): JSX.Element => {
-  const [audio] = useState(new Audio(url));
+export const MusicPlayer = (): JSX.Element => {
+  const [audio] = useState(new Audio('/audio/MLPR_Song.mp3'));
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     if (playing && audio) {
+      audio.volume = 0.2;
       audio.play();
       audio.setAttribute('loop', 'true');
     } else {
       audio.pause();
     }
+    return () => {
+      audio.pause();
+      audio.remove();
+    };
   }, [audio, playing]);
 
   return (

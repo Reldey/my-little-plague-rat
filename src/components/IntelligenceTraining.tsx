@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { IRat } from '../interfaces/rat';
-import { colors, theme } from '../theme';
+import React, { RefObject, useEffect, useState } from 'react';
+import { IRat } from '../data/IRat';
+import { theme } from '../theme';
 import { Button } from './Button';
 import { MemoryCard } from './MemoryCard';
 
@@ -34,8 +34,10 @@ function chunkArray<Type>(array: Type[], size: number) {
 
 export function IntelligenceTraining(props: {
   rat: IRat;
+  penRect: DOMRect | undefined;
+  gameRef: RefObject<HTMLDivElement>;
   onClose: () => void;
-  onCompletion: (score: number) => void;
+  onCompletion: (trainingRat: IRat, score: number) => void;
 }): JSX.Element {
   const [timer, setTimer] = useState(30);
   const [cardLists] = useState<string[][]>(chunkArray<string>(shuffleArray<string>([...cards, ...cards]), 4));
@@ -43,6 +45,7 @@ export function IntelligenceTraining(props: {
   const [matches, setMatches] = useState(0);
   const [matchedCards, setMatchedCards] = useState<string[]>([]);
   const [shownSymbols, setShownSymbols] = useState<string[]>([]);
+  const [trainingRat, setTrainingRat] = useState<IRat>();
 
   useEffect(() => {
     const cardTimer = setTimeout(() => {
@@ -69,6 +72,12 @@ export function IntelligenceTraining(props: {
   }, [shownCards]);
 
   useEffect(() => {
+    if (timer === 29) {
+      setTrainingRat(props.rat);
+    }
+  }, [timer]);
+
+  useEffect(() => {
     const timerInterval = setInterval(() => {
       if (timer > 0) {
         setTimer(timer - 1);
@@ -79,7 +88,9 @@ export function IntelligenceTraining(props: {
 
   useEffect(() => {
     if (timer === 0) {
-      props.onCompletion(matches / 8);
+      if (trainingRat) {
+        props.onCompletion(trainingRat, matches / 8);
+      }
     }
   }, [timer]);
 
@@ -88,11 +99,14 @@ export function IntelligenceTraining(props: {
       style={{
         ...theme.cardStyle,
         ...{
-          height: '540px',
-          width: '440px',
           flexFlow: 'column nowrap',
           justifyContent: 'space-between',
           alignItems: 'center',
+          textAlign: 'center',
+          marginBottom:
+            props.penRect && props.gameRef.current
+              ? 'calc(' + props.gameRef.current.clientHeight + 'px - ' + props.penRect.height + 'px)'
+              : 0,
         },
       }}
     >
@@ -145,7 +159,7 @@ export function IntelligenceTraining(props: {
             <div>Finished!</div>
             <div style={{ marginTop: '6px' }}>You scored {matches} out of 8</div>
             <div style={{ display: 'flex', flexFlow: 'row nowrap', justifyContent: 'center', marginTop: '6px' }}>
-              <div>{props.rat.name}&nbsp;</div>
+              <div>{trainingRat?.name || 'Error'}&nbsp;</div>
               <div>
                 {matches <= 2 && `couldn't remember a thing!`}
                 {matches > 2 && matches <= 4 && 'did OK...'}

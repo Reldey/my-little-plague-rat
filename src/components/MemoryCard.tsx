@@ -26,7 +26,7 @@ export function MemoryCard(props: {
       style={{
         ...memoryCardStyle,
         ...{
-          border: notSolved ? (hovered ? 'solid 2px white' : 'solid 2px ' + colors.primary) : 'none',
+          border: notSolved ? (hovered ? 'solid 2px white' : 'solid 2px ' + colors.primary) : 'solid 2px black',
           cursor: notSolved ? 'pointer' : 'default',
         },
       }}

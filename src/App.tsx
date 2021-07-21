@@ -7,20 +7,18 @@ function App(): JSX.Element {
   const [showScene, setShowScene] = useState<'Menu' | 'Game' | 'Options'>('Menu');
 
   return (
-    <div className="App">
-      <div style={{ display: 'flex', flex: '1 1 auto', width: '800px', height: '600px', backgroundColor: 'black' }}>
-        {showScene === 'Menu' && (
-          <MenuScene
-            onPlay={() => {
-              setShowScene('Game');
-            }}
-            onOptions={() => {
-              setShowScene('Options');
-            }}
-          />
-        )}
-        {showScene === 'Game' && <GameScene />}
-      </div>
+    <div style={{ display: 'flex', flex: '1 1 auto', backgroundColor: 'black', height: '100%', width: '100%' }}>
+      {showScene === 'Menu' && (
+        <MenuScene
+          onPlay={() => {
+            setShowScene('Game');
+          }}
+          onOptions={() => {
+            setShowScene('Options');
+          }}
+        />
+      )}
+      {showScene === 'Game' && <GameScene />}
     </div>
   );
 }

@@ -4,6 +4,7 @@ interface ITheme {
   buttonStyle: React.CSSProperties;
   iconStyle: React.CSSProperties;
   cardStyle: React.CSSProperties;
+  mobileCutOff: number;
 }
 
 export const colors = {
@@ -68,7 +69,9 @@ export const theme: ITheme = {
     bottom: 0,
     margin: 'auto',
     color: 'white',
+    maxWidth: '750px',
     border: '25px solid ' + colors.primary,
     borderImage: fancyBorderImage,
   },
+  mobileCutOff: 1000,
 };
