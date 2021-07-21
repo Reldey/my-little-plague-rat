@@ -17,13 +17,18 @@ export function MenuScene(props: { onPlay: () => void; onOptions: () => void }):
         color: 'white',
       }}
     >
-      <ReactPlayer
+      {/*  <ReactPlayer
         className="react-player fixed-bottom"
         url="/media/Plague_Rat_Title_Animated.MP4"
         width="400px"
         height="400px"
         controls={false}
         playing={true}
+      />*/}
+      <img
+        src={'/media/Plague_Rat_Title.png'}
+        alt={'my little plague rat'}
+        style={{ maxWidth: '90%', maxHeight: '60%', marginBottom: '12px' }}
       />
       <Button style={theme.buttonStyle} onClick={props.onPlay}>
         Play
