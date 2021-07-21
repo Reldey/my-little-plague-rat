@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactPlayer from 'react-player';
 import { Button } from '../components/Button';
 import { theme } from '../theme';
 
