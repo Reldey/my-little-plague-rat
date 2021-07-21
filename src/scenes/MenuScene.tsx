@@ -19,7 +19,7 @@ export function MenuScene(props: { onPlay: () => void; onOptions: () => void }):
     >
       <ReactPlayer
         className="react-player fixed-bottom"
-        url="media/Plague_Rat_Title_Animated.MP4"
+        url="/media/Plague_Rat_Title_Animated.MP4"
         width="400px"
         height="400px"
         controls={false}
