@@ -62,7 +62,7 @@ export function RatCharacter(props: {
         bottom:
           props.currentRat !== null
             ? props.currentRat.style.bottom
-            : Math.floor(Math.random() * (props.penRect ? props.penRect?.height / 2 : 200)) + RAT_INFO_HEIGHT + 'px',
+            : Math.floor(Math.random() * (props.penRect ? props.penRect?.height / 4 : 200)) + RAT_INFO_HEIGHT + 'px',
         left:
           props.currentRat !== null
             ? props.currentRat.style.left

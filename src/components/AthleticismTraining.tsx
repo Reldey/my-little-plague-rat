@@ -19,7 +19,6 @@ export function AthleticismTraining(props: {
 
   const gameKeyPresses = useCallback(
     (event) => {
-      console.log(countdown);
       if ((event.keyCode === 90 || event.keycode === 191) && countdown <= 0 && timer > 0) {
         if (effort < 100) {
           setEffort(effort + 2);

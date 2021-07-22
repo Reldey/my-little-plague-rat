@@ -7,7 +7,16 @@ function App(): JSX.Element {
   const [showScene, setShowScene] = useState<'Menu' | 'Game' | 'Options'>('Menu');
 
   return (
-    <div style={{ display: 'flex', flex: '1 1 auto', backgroundColor: 'black', height: '100%', width: '100%' }}>
+    <div
+      style={{
+        display: 'flex',
+        flex: '1 1 auto',
+        backgroundColor: 'black',
+        height: '100%',
+        width: '100%',
+        maxWidth: '1000px',
+      }}
+    >
       {showScene === 'Menu' && (
         <MenuScene
           onPlay={() => {

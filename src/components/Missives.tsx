@@ -53,7 +53,10 @@ export function Missives(props: {
           }}
         >
           {showMissiveList && props.missiveList.length === 0 && (
-            <div style={{ textAlign: 'center' }}>No missives available!</div>
+            <div
+              style={{ textAlign: 'center' }}
+            >{`Congratulations, you have completed the game! I hope you enjoyed it, but even if you didn't I would love any feedback. 
+            Please send me an email at chandler@priceux.com with your thoughts!`}</div>
           )}
           {showMissiveList && props.missiveList.length > 0 && (
             <>

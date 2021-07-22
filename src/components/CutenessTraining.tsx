@@ -1,4 +1,5 @@
 import React, { RefObject, useCallback, useEffect, useState } from 'react';
+import useSound from 'use-sound';
 import { IRat } from '../data/IRat';
 import { RAT_INFO_HEIGHT } from '../scenes/GameScene';
 import { colors, theme } from '../theme';
@@ -32,18 +33,25 @@ export function CutenessTraining(props: {
   const [effort, setEffort] = useState(0);
   const [targetKey, setTargetKey] = useState<number>();
   const [trainingRat, setTrainingRat] = useState<IRat>();
+  const [play] = useSound('/audio/Tap_Warm.mp3');
 
   const gameKeyPresses = useCallback(
     (event) => {
-      if (event.keyCode === targetKey && countdown <= 0 && timer > 0) {
-        if (effort < 100) {
-          setEffort(effort + 2);
-          setTargetKey(undefined);
-          if (timer >= 3) {
-            setTimeout(() => {
-              setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
-            }, 250);
+      if (countdown <= 0 && timer > 0) {
+        if (event.keyCode === targetKey) {
+          if (effort < 100) {
+            setEffort(effort + 2);
+            setTargetKey(undefined);
+            play();
+            if (timer >= 3) {
+              setTimeout(() => {
+                setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
+              }, 250);
+            }
           }
+        } else {
+          setEffort(effort - 2);
+          setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
         }
       }
     },
@@ -51,15 +59,21 @@ export function CutenessTraining(props: {
   );
 
   function tapKey(keyTapped: number) {
-    if (keyTapped === targetKey && countdown <= 0 && timer > 0) {
-      if (effort < 100) {
-        setEffort(effort + 2);
-        setTargetKey(undefined);
-        if (timer >= 3) {
-          setTimeout(() => {
-            setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
-          }, 250);
+    if (countdown <= 0 && timer > 0) {
+      if (keyTapped === targetKey) {
+        if (effort < 100) {
+          setEffort(effort + 2);
+          setTargetKey(undefined);
+          play();
+          if (timer >= 3) {
+            setTimeout(() => {
+              setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
+            }, 250);
+          }
         }
+      } else {
+        setEffort(effort - 2);
+        setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
       }
     }
   }
@@ -80,7 +94,7 @@ export function CutenessTraining(props: {
 
   useEffect(() => {
     const countdownInterval = setInterval(() => {
-      if (countdown > -1) {
+      if (countdown > 0) {
         setCountdown(countdown - 1);
       }
     }, 1000);
@@ -89,7 +103,7 @@ export function CutenessTraining(props: {
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
-      if (countdown === -1 && timer > 0) {
+      if (countdown === 0 && timer > 0) {
         if (timer === 40 && targetKey === undefined) {
           setTargetKey(keyCodeArray[Math.floor(Math.random() * (3 + 1))]);
         }

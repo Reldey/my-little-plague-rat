@@ -14,7 +14,8 @@ import { CutenessTraining } from '../components/CutenessTraining';
 import { Missives } from '../components/Missives';
 import { missives } from '../data/missives';
 import { MusicPlayer } from '../components/MusicPlayer';
-export const RAT_LIST_HEIGHT = 64;
+import useSound from 'use-sound';
+export const RAT_LIST_HEIGHT = 60;
 export const RAT_INFO_HEIGHT = 64;
 
 export function GameScene(): JSX.Element {
@@ -35,8 +36,15 @@ export function GameScene(): JSX.Element {
   const ratPenRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<HTMLDivElement>(null);
 
+  const [squeak1] = useSound('/audio/Mouse_Squeak_1.mp3', { volume: 0.2 });
+  const [squeak2] = useSound('/audio/Mouse_Squeak_2.mp3', { volume: 0.2 });
+  const [squeak3] = useSound('/audio/Mouse_Squeak_3.mp3', { volume: 0.2 });
+  const [squeak4] = useSound('/audio/Mouse_Squeak_4.mp3', { volume: 0.2 });
+
+  const squeaks = [squeak1, squeak2, squeak3, squeak4];
+
   const [maxRats, setMaxRats] = useState(2);
-  const [coins, setCoins] = useState(100);
+  const [coins, setCoins] = useState(0);
 
   const liveRatCount = ratList.filter((rat) => rat.status === 'alive').length;
   useEffect(() => {
@@ -64,7 +72,6 @@ export function GameScene(): JSX.Element {
         if (rat.status !== 'dead') {
           rat.age += 1;
           if (rat.age % 10 === 0) {
-            console.log(rat.stamina);
             if (rat.stamina >= 50 && rat.size < 2) {
               rat.size += 0.2;
               if (rat.size > 2) {
@@ -127,7 +134,6 @@ export function GameScene(): JSX.Element {
                 }
               }
             }
-            console.log(newRatList);
             setRatList(newRatList);
           }
         }
@@ -423,6 +429,9 @@ export function GameScene(): JSX.Element {
           clearFailed={(missive) => {
             let newMissiveList = [...missiveList];
             newMissiveList = newMissiveList.filter((gameMissive) => gameMissive.id !== missive.id);
+            missive.status = 'available';
+            missive.time = missive.originalTime;
+            newMissiveList.push(missive);
             setMissiveList(newMissiveList);
           }}
           penRect={penRect}
@@ -696,6 +705,7 @@ export function GameScene(): JSX.Element {
         <ActionButton
           onClick={() => {
             ratGenerator();
+            squeaks[Math.floor(Math.random() * 4)]();
           }}
           disabled={maxRats <= liveRatCount}
         >
