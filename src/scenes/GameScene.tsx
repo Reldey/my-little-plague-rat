@@ -515,7 +515,7 @@ export function GameScene(): JSX.Element {
           backgroundImage: `url(${Background})`,
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
-          backgroundColor: '#1f1f14',
+          backgroundColor: '#0c0c0c',
         }}
         id={'rat_pen'}
         ref={ratPenRef}
