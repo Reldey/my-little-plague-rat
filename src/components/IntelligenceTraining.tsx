@@ -1,5 +1,6 @@
 import React, { RefObject, useEffect, useState } from 'react';
 import { IRat } from '../data/IRat';
+import { RAT_INFO_HEIGHT } from '../scenes/GameScene';
 import { theme } from '../theme';
 import { Button } from './Button';
 import { MemoryCard } from './MemoryCard';
@@ -105,7 +106,11 @@ export function IntelligenceTraining(props: {
           textAlign: 'center',
           marginBottom:
             props.penRect && props.gameRef.current
-              ? 'calc(' + props.gameRef.current.clientHeight + 'px - ' + props.penRect.height + 'px)'
+              ? 'calc(' +
+                props.gameRef.current.clientHeight +
+                'px - ' +
+                (props.penRect.height - RAT_INFO_HEIGHT) +
+                'px)'
               : 0,
         },
       }}

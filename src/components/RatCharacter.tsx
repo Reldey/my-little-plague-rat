@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import useSound from 'use-sound';
 import { IRat } from '../data/IRat';
 import RatSvg from '../graphics/Rat_2.svg';
+import { RAT_INFO_HEIGHT } from '../scenes/GameScene';
 
 export const RAT_BASE_HEIGHT = 32;
 export const RAT_BASE_WIDTH = 64;
@@ -36,7 +37,6 @@ export function RatCharacter(props: {
           }
         } else {
           if (props.penRect) {
-            console.log(props.penRect.width);
             generateNewLeft(props.penRect.width, ratBody);
           }
         }
@@ -62,7 +62,7 @@ export function RatCharacter(props: {
         bottom:
           props.currentRat !== null
             ? props.currentRat.style.bottom
-            : Math.floor(Math.random() * (props.penRect ? props.penRect?.height / 2 : 200)) + 12 + 'px',
+            : Math.floor(Math.random() * (props.penRect ? props.penRect?.height / 2 : 200)) + RAT_INFO_HEIGHT + 'px',
         left:
           props.currentRat !== null
             ? props.currentRat.style.left
@@ -74,6 +74,7 @@ export function RatCharacter(props: {
         transformOrigin: 'bottom center',
         cursor: 'pointer',
         userSelect: 'none',
+        zIndex: props.selected ? 1 : 0,
       }}
     >
       <div

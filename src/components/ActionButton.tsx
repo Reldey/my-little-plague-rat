@@ -4,7 +4,8 @@ import { theme } from '../theme';
 
 interface IActionButton {
   style?: React.CSSProperties;
-  onClick: () => void;
+  onClick?: () => void;
+  onMouseDown?: () => void;
   disabled?: boolean;
   children: React.ReactNode;
 }
@@ -37,7 +38,11 @@ export function ActionButton(props: IActionButton): JSX.Element {
         }}
         onClick={() => {
           if (!props.disabled) {
-            props.onClick();
+            if (props.onClick) {
+              props.onClick();
+            } else if (props.onMouseDown) {
+              props.onMouseDown();
+            }
             play();
           }
         }}

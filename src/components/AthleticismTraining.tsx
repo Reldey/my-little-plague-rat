@@ -1,5 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useState } from 'react';
 import { IRat } from '../data/IRat';
+import { RAT_INFO_HEIGHT } from '../scenes/GameScene';
 import { theme } from '../theme';
 import { ActionButton } from './ActionButton';
 import { Button } from './Button';
@@ -79,7 +80,11 @@ export function AthleticismTraining(props: {
           textAlign: 'center',
           marginBottom:
             props.penRect && props.gameRef.current
-              ? 'calc(' + props.gameRef.current.clientHeight + 'px - ' + props.penRect.height + 'px)'
+              ? 'calc(' +
+                props.gameRef.current.clientHeight +
+                'px - ' +
+                (props.penRect.height - RAT_INFO_HEIGHT) +
+                'px)'
               : 0,
         },
       }}
@@ -116,8 +121,8 @@ export function AthleticismTraining(props: {
         </div>
         <div style={{ display: 'flex', flexFlow: 'row nowrap', justifyContent: 'space-around', marginTop: '12px' }}>
           <ActionButton
-            onClick={() => {
-              if (effort < 100) {
+            onMouseDown={() => {
+              if (effort < 100 && countdown < 0) {
                 setEffort(effort + 2);
               }
             }}
@@ -127,8 +132,8 @@ export function AthleticismTraining(props: {
             Foot
           </ActionButton>
           <ActionButton
-            onClick={() => {
-              if (effort < 100) {
+            onMouseDown={() => {
+              if (effort < 100 && countdown < 0) {
                 setEffort(effort + 2);
               }
             }}

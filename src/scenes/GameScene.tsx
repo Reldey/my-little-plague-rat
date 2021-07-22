@@ -14,7 +14,8 @@ import { CutenessTraining } from '../components/CutenessTraining';
 import { Missives } from '../components/Missives';
 import { missives } from '../data/missives';
 import { MusicPlayer } from '../components/MusicPlayer';
-export const RAT_LIST_HEIGHT = 94;
+export const RAT_LIST_HEIGHT = 64;
+export const RAT_INFO_HEIGHT = 64;
 
 export function GameScene(): JSX.Element {
   const [ratList, setRatList] = useState<IRat[]>([]);
@@ -27,16 +28,17 @@ export function GameScene(): JSX.Element {
   const [showTrainingCuteness, setShowTrainingCuteness] = useState(false);
   const [showMissives, setShowMissives] = useState(false);
   const [missiveList, setMissiveList] = useState(missives);
+  const [missivesRequireAction, setMissivesRequireAction] = useState(false);
+  const [showStore, setShowStore] = useState(false);
   const [penRect, setPenRect] = useState<DOMRect>();
   const [oldPenRect, setOldPenRect] = useState<DOMRect>();
   const ratPenRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<HTMLDivElement>(null);
 
-  const [maxRats] = useState(2);
-  const [coins] = useState(100);
+  const [maxRats, setMaxRats] = useState(2);
+  const [coins, setCoins] = useState(100);
 
   const liveRatCount = ratList.filter((rat) => rat.status === 'alive').length;
-
   useEffect(() => {
     function handleResize() {
       if (ratPenRef !== null) {
@@ -62,10 +64,11 @@ export function GameScene(): JSX.Element {
         if (rat.status !== 'dead') {
           rat.age += 1;
           if (rat.age % 10 === 0) {
-            if (rat.stamina >= 50 && rat.size < 3) {
+            console.log(rat.stamina);
+            if (rat.stamina >= 50 && rat.size < 2) {
               rat.size += 0.2;
-              if (rat.size > 3) {
-                rat.size = 3 + rat.initialSize - 1;
+              if (rat.size > 2) {
+                rat.size = 2 + rat.initialSize - 1;
               }
             }
             rat.stamina += -25;
@@ -95,8 +98,6 @@ export function GameScene(): JSX.Element {
       const newMissiveList = [...missiveList];
       for (const missive of newMissiveList) {
         if (missive.status === 'inProgress') {
-          console.log(missive.athleticismReq);
-          console.log(missive.ratsSent);
           if (missive.time > 0) {
             missive.time += -1;
           } else if (missive.time === 0 && missive.ratsSent) {
@@ -135,7 +136,18 @@ export function GameScene(): JSX.Element {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [ratList]);
+  }, [ratList, coins]);
+
+  useEffect(() => {
+    const actionMissives = missiveList.filter(
+      (missive) => missive.status === 'completed' || missive.status === 'failed',
+    );
+    if (actionMissives.length > 0) {
+      setMissivesRequireAction(true);
+    } else {
+      setMissivesRequireAction(false);
+    }
+  }, [missiveList]);
 
   function ratGenerator() {
     let ratName = names[Math.floor(Math.random() * names.length)];
@@ -226,7 +238,7 @@ export function GameScene(): JSX.Element {
               <div>
                 Size
                 <div style={{ marginTop: '6px' }} />
-                {parseFloat(selectedRat.size.toPrecision(2)) * 4}
+                {(selectedRat.size * 4).toFixed(2)}
                 &nbsp;cm
               </div>
             </div>
@@ -239,15 +251,15 @@ export function GameScene(): JSX.Element {
             >
               <div>
                 Athleticism&nbsp;
-                {selectedRat.athleticism.toPrecision(2)}
+                {selectedRat.athleticism.toFixed(2)}
               </div>
               <div>
                 Intelligence&nbsp;
-                {selectedRat.intelligence.toPrecision(2)}
+                {selectedRat.intelligence.toFixed(2)}
               </div>
               <div>
                 Cuteness&nbsp;
-                {selectedRat.cuteness.toPrecision(2)}
+                {selectedRat.cuteness.toFixed(2)}
               </div>
             </div>
           </div>
@@ -272,7 +284,7 @@ export function GameScene(): JSX.Element {
               alignItems: 'center',
               marginBottom:
                 penRect && gameRef.current
-                  ? 'calc(' + gameRef.current.clientHeight + 'px - ' + penRect.height + 'px)'
+                  ? 'calc(' + gameRef.current.clientHeight + 'px - ' + (penRect.height - RAT_INFO_HEIGHT) + 'px)'
                   : 0,
             },
           }}
@@ -402,9 +414,88 @@ export function GameScene(): JSX.Element {
             setRatList(newRatList);
             setMissiveList(newMissiveList);
           }}
+          claimRewards={(missive) => {
+            let newMissiveList = [...missiveList];
+            newMissiveList = newMissiveList.filter((gameMissive) => gameMissive.id !== missive.id);
+            setCoins(coins + missive.coinReward);
+            setMissiveList(newMissiveList);
+          }}
+          clearFailed={(missive) => {
+            let newMissiveList = [...missiveList];
+            newMissiveList = newMissiveList.filter((gameMissive) => gameMissive.id !== missive.id);
+            setMissiveList(newMissiveList);
+          }}
           penRect={penRect}
           gameRef={gameRef}
         />
+      )}
+      {showStore && (
+        <div
+          style={{
+            ...theme.cardStyle,
+            ...{
+              flexFlow: 'column nowrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom:
+                penRect && gameRef.current
+                  ? 'calc(' + gameRef.current.clientHeight + 'px - ' + penRect.height + 'px)'
+                  : 0,
+            },
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexFlow: 'column nowrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <div style={{ fontSize: '22px' }}>Store</div>
+            <div style={{ display: 'flex', flexFlow: 'column nowrap', width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexFlow: 'row nowrap',
+                  alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  borderTop: 'solid 2px gray',
+                  padding: '6px 0 6px 0',
+                  margin: '6px 0 0 0',
+                }}
+              >
+                <>Increased Pen Size</>
+                <ActionButton
+                  style={{
+                    width: '48px',
+                    minWidth: '48px',
+                    height: '48px',
+                    display: 'flex',
+                    flexFlow: 'column nowrap',
+                  }}
+                  onClick={() => {
+                    setCoins(coins - 100);
+                    setMaxRats(maxRats + 1);
+                  }}
+                  disabled={coins < 100}
+                >
+                  <i style={{ ...theme.iconStyle, ...{ color: 'goldenrod' } }}>toll</i>100
+                </ActionButton>
+              </div>
+            </div>
+          </div>
+          <Button
+            onClick={() => {
+              setShowStore(false);
+            }}
+            style={{ width: '120px' }}
+          >
+            Close
+          </Button>
+        </div>
       )}
       {/* RAT PEN */}
       <div
@@ -445,17 +536,120 @@ export function GameScene(): JSX.Element {
         })}
         {}
       </div>
+      {/* SELECTED RAT MENU */}
+      {selectedRat && penRect && gameRef && gameRef.current && (
+        <div
+          style={{
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: '16px',
+            position: 'absolute',
+            width: '100%',
+            height: RAT_INFO_HEIGHT + 'px',
+            bottom: 'calc(' + gameRef.current.clientHeight + 'px - ' + penRect.height + 'px)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexFlow: 'row nowrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginLeft: '6px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column nowrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <div>{selectedRat.athleticism.toFixed(1)}</div>
+              <i style={theme.iconStyle}>directions_run</i>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column nowrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginLeft: '6px',
+              }}
+            >
+              <div>{selectedRat.intelligence.toFixed(1)}</div>
+              <i style={theme.iconStyle}>psychology</i>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'column nowrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '0px 6px',
+                marginLeft: '6px',
+              }}
+            >
+              <div>{selectedRat.cuteness.toFixed(1)}</div>
+              <i style={theme.iconStyle}>favorite</i>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexFlow: 'row nowrap', justifyContent: 'center' }}>
+            <ActionButton
+              disabled={
+                selectedRat === undefined ||
+                selectedRat.stamina === 100 ||
+                selectedRat.present === false ||
+                selectedRat.status !== 'alive'
+              }
+              onClick={() => {
+                if (selectedRat && selectedRat.stamina < 100) {
+                  const newRatList = [...ratList];
+                  for (const rat of newRatList) {
+                    if (rat.id === selectedRat.id) {
+                      rat.stamina += 10;
+                      if (rat.stamina > 100) {
+                        rat.stamina = 100;
+                      }
+                    }
+                  }
+                  setRatList(newRatList);
+                }
+              }}
+              style={{ minWidth: '42px', width: '42px', height: '42px', fontSize: '16px', marginRight: '6px' }}
+            >
+              Feed
+              <br />
+              Rat
+            </ActionButton>
+            <ActionButton
+              onClick={() => {
+                setShowTraining(!showTraining);
+              }}
+              disabled={selectedRat === undefined || !selectedRat.present}
+              style={{ minWidth: '42px', width: '42px', height: '42px', fontSize: '16px', marginRight: '6px' }}
+            >
+              Train
+            </ActionButton>
+          </div>
+        </div>
+      )}
+
       {/* RAT LIST */}
       <div
         style={{
           display: 'flex',
-          width: '100%',
+          maxWidth: '100%',
           height: RAT_LIST_HEIGHT + 'px',
           backgroundColor: 'black',
-          maxWidth: '100%',
           overflowX: 'auto',
-          padding: '6px',
+          padding: '6px 6px 6px 0',
           borderTop: 'solid 2px gray',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
         }}
       >
         {ratList.map((rat) => {
@@ -479,10 +673,6 @@ export function GameScene(): JSX.Element {
                 onMouseLeave={() => {
                   setHoveredRat(undefined);
                 }}
-                onInfoClick={(rat) => {
-                  setSelectedRat(rat);
-                  setShowRatInfo(!showRatInfo);
-                }}
               />
             );
           } else {
@@ -498,71 +688,60 @@ export function GameScene(): JSX.Element {
           width: '100%',
           justifyContent: 'space-around',
           alignItems: 'center',
-          backgroundColor: 'gray',
+          backgroundColor: 'black',
+          borderTop: 'solid 2px white',
           padding: '6px',
         }}
       >
-        {/* RESOURCES */}
-        <div style={{ display: 'flex', flexFlow: 'row nowrap', justifyContent: 'center', alignItems: 'center' }}>
-          <i style={{ ...theme.iconStyle, ...{ color: 'goldenrod' } }}>toll</i>
-          <div>{coins}</div>
-        </div>
-        <div style={{ display: 'flex', flexFlow: 'column nowrap' }}>
+        <ActionButton
+          onClick={() => {
+            ratGenerator();
+          }}
+          disabled={maxRats <= liveRatCount}
+        >
+          +<br />
+          Rat
+        </ActionButton>
+        <ActionButton
+          onClick={() => {
+            setShowStore(true);
+          }}
+          style={{ marginTop: '6px' }}
+        >
+          <div style={{ display: 'flex', flexFlow: 'column nowrap' }}>
+            <i style={{ ...theme.iconStyle, ...{ color: 'goldenrod' } }}>toll</i>
+            {coins}
+          </div>
+        </ActionButton>
+        {/* 
+                <div style={{ display: 'flex', flexFlow: 'column nowrap' }}>
           <ActionButton
             onClick={() => {
-              ratGenerator();
+              setShowRatInfo(!showRatInfo);
             }}
-            disabled={maxRats <= liveRatCount}
+            disabled={selectedRat === undefined || selectedRat.status !== 'alive'}
           >
-            +<br />
             Rat
-          </ActionButton>
-          <ActionButton
-            disabled={
-              selectedRat === undefined ||
-              selectedRat.stamina === 100 ||
-              selectedRat.present === false ||
-              selectedRat.status !== 'alive'
-            }
-            onClick={() => {
-              if (selectedRat && selectedRat.stamina < 100) {
-                const newRatList = [...ratList];
-                for (const rat of newRatList) {
-                  if (rat.id === selectedRat.id) {
-                    rat.stamina += 10;
-                    if (rat.stamina > 100) {
-                      rat.stamina = 100;
-                    }
-                  }
-                }
-                setRatList(newRatList);
-              }
-            }}
-            style={{ marginTop: '6px' }}
-          >
-            Feed
             <br />
-            Rat
+            Info
           </ActionButton>
         </div>
-        <div style={{ display: 'flex', flexFlow: 'column nowrap' }}>
-          <ActionButton
-            onClick={() => {
-              setShowTraining(!showTraining);
-            }}
-            disabled={selectedRat === undefined}
-          >
-            Train
-          </ActionButton>
-          <ActionButton
-            onClick={() => {
-              setShowMissives(true);
-            }}
-            style={{ marginTop: '6px' }}
-          >
-            Missives
-          </ActionButton>
-        </div>
+        */}
+
+        <ActionButton
+          onClick={() => {
+            setShowMissives(true);
+          }}
+          style={{ marginTop: '6px' }}
+        >
+          {missivesRequireAction && (
+            <>
+              !<br />
+            </>
+          )}
+          Missives
+        </ActionButton>
+
         <MusicPlayer />
       </div>
     </div>

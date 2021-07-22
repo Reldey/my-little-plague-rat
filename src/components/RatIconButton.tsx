@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import useSound from 'use-sound';
 import { IRat } from '../data/IRat';
 import { theme } from '../theme';
 
@@ -9,21 +10,23 @@ export function RatIconButton(props: {
   onClick: (rat: IRat) => void;
   onMouseEnter: (rat: IRat) => void;
   onMouseLeave: () => void;
-  onInfoClick: (rat: IRat) => void;
 }): JSX.Element {
-  const [hovered, setHovered] = useState(false);
-  const [hoveredInfo, setHoveredInfo] = useState(false);
-  const [audio] = useState(new Audio('/audio/Tap_Warm.mp3'));
+  const [squeak1] = useSound('/audio/Mouse_Squeak_1.mp3', { volume: 0.2 });
+  const [squeak2] = useSound('/audio/Mouse_Squeak_2.mp3', { volume: 0.2 });
+  const [squeak3] = useSound('/audio/Mouse_Squeak_3.mp3', { volume: 0.2 });
+  const [squeak4] = useSound('/audio/Mouse_Squeak_4.mp3', { volume: 0.2 });
+
+  const squeaks = [squeak1, squeak2, squeak3, squeak4];
 
   return (
     <div
       style={{
         display: 'flex',
         flexFlow: 'column nowrap',
-        width: '82px',
-        minWidth: '82px',
+        width: '72px',
+        minWidth: '72px',
         fontSize: '12px',
-        border: hovered || props.selected || props.hovered ? 'white solid 2px' : 'rgba(0,0,0,0.5) solid 2px',
+        border: props.selected ? 'white solid 4px' : 'gray solid 2px',
         borderRadius: '4px',
         marginLeft: '6px',
         cursor: 'pointer',
@@ -33,38 +36,20 @@ export function RatIconButton(props: {
         userSelect: 'none',
       }}
       onClick={() => {
-        audio.play();
+        if (!props.selected && props.rat.present) {
+          squeaks[Math.floor(Math.random() * 4)]();
+        }
+
         props.onClick(props.rat);
       }}
       onMouseEnter={() => {
-        setHovered(true);
         props.onMouseEnter(props.rat);
       }}
       onMouseLeave={() => {
-        setHovered(false);
         props.onMouseLeave();
       }}
     >
-      <div>{props.rat.name}</div>
-      <i
-        style={{
-          ...theme.iconStyle,
-          ...{ marginTop: '6px', width: '24px', color: hoveredInfo ? 'white' : 'lightgray' },
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          audio.play();
-          props.onInfoClick(props.rat);
-        }}
-        onMouseEnter={() => {
-          setHoveredInfo(true);
-        }}
-        onMouseLeave={() => {
-          setHoveredInfo(false);
-        }}
-      >
-        info
-      </i>
+      <div style={{ fontSize: '18px' }}>{props.rat.name}</div>
       <div
         style={{
           width: '100%',

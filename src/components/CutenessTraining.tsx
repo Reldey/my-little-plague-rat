@@ -1,5 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useState } from 'react';
 import { IRat } from '../data/IRat';
+import { RAT_INFO_HEIGHT } from '../scenes/GameScene';
 import { colors, theme } from '../theme';
 import { Button } from './Button';
 
@@ -125,7 +126,11 @@ export function CutenessTraining(props: {
           textAlign: 'center',
           marginBottom:
             props.penRect && props.gameRef.current
-              ? 'calc(' + props.gameRef.current.clientHeight + 'px - ' + props.penRect.height + 'px)'
+              ? 'calc(' +
+                props.gameRef.current.clientHeight +
+                'px - ' +
+                (props.penRect.height - RAT_INFO_HEIGHT) +
+                'px)'
               : 0,
         },
       }}
